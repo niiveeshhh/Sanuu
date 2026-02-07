@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Layout } from '../components/Layout';
 import { Landing } from '../components/Landing';
 import { MiniGame } from '../components/MiniGame';
@@ -13,12 +13,15 @@ type Stage = 'landing' | 'game' | 'gallery' | 'videos' | 'messages' | 'final';
 
 function App() {
   const [stage, setStage] = useState<Stage>('landing');
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Background music that plays throughout the entire experience
   useEffect(() => {
     const audio = new Audio('/song.mp3');
     audio.loop = true;
     audio.volume = 0.3; // Set volume to 30%
+    audioRef.current = audio;
 
     // Play music when app starts
     const playPromise = audio.play();
@@ -42,6 +45,14 @@ function App() {
     };
   }, []);
 
+  // Handle mute/unmute
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
   const startExperience = () => {
     setStage('game');
   };
@@ -51,7 +62,7 @@ function App() {
   };
 
   return (
-    <Layout>
+    <Layout onToggleMute={toggleMute} isMuted={isMuted}>
       <AnimatePresence mode="wait">
         {stage === 'landing' && (
           <motion.div
