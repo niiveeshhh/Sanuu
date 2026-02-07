@@ -13,14 +13,27 @@ interface Item {
     type: 'rose' | 'bad';
 }
 
+// Beautiful love quotes to display during the game
+const loveQuotes = [
+    "Every rose I catch reminds me of you 🌹",
+    "You make my heart bloom like these roses 💖",
+    "Catching roses for the love of my life ✨",
+    "Each rose is a symbol of my love for you 💕",
+    "You're more beautiful than a thousand roses 🌹",
+    "My love for you grows with every rose 💗",
+    "These roses can't compare to your beauty 🌺",
+    "Forever catching roses, forever loving you 💝"
+];
+
 export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
     const [score, setScore] = useState(0);
     const [items, setItems] = useState<Item[]>([]);
+    const [currentQuote, setCurrentQuote] = useState(0);
     const targetScore = 10;
 
     const spawnItem = useCallback(() => {
         const id = Date.now();
-        const x = Math.random() * (window.innerWidth - 100); // Keep within bounds for larger roses
+        const x = Math.random() * (window.innerWidth - 140); // Keep within bounds for larger roses
         setItems(prev => [...prev, { id, x, type: 'rose' }]);
     }, []);
 
@@ -31,9 +44,17 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
             return;
         }
 
-        const interval = setInterval(spawnItem, 600); // Faster spawn for more engaging gameplay
+        const interval = setInterval(spawnItem, 550); // Even faster spawn
         return () => clearInterval(interval);
     }, [score, spawnItem, onComplete]);
+
+    // Rotate love quotes every 4 seconds
+    useEffect(() => {
+        const quoteInterval = setInterval(() => {
+            setCurrentQuote(prev => (prev + 1) % loveQuotes.length);
+        }, 4000);
+        return () => clearInterval(quoteInterval);
+    }, []);
 
     const handleCollect = (id: number) => {
         // playPop();
@@ -47,12 +68,31 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
 
     return (
         <div className="flex flex-col items-center justify-center h-full w-full relative overflow-hidden">
+            {/* Score Display */}
             <div className="absolute top-4 right-4 bg-white/50 backdrop-blur-md p-4 rounded-xl shadow-lg border border-rose-200 z-50">
                 <div className="flex items-center gap-2 text-2xl font-bold text-rose-600">
                     <Trophy className="w-6 h-6" />
                     <span>{score} / {targetScore}</span>
                 </div>
                 <p className="text-xs text-rose-800">Catch the roses!</p>
+            </div>
+
+            {/* Love Quote Display */}
+            <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 z-50 max-w-md px-4">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentQuote}
+                        initial={{ opacity: 0, y: -20, scale: 0.8 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                        transition={{ duration: 0.6 }}
+                        className="bg-white/70 backdrop-blur-md px-6 py-4 rounded-2xl shadow-xl border-2 border-rose-300"
+                    >
+                        <p className="text-xl md:text-2xl font-handwriting text-rose-600 text-center leading-relaxed">
+                            {loveQuotes[currentQuote]}
+                        </p>
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
             <AnimatePresence>
@@ -77,7 +117,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
                         style={{ left: item.x }}
                         className="absolute top-0 cursor-pointer z-40 touch-none select-none"
                     >
-                        <img src="/rose.jpg" alt="Rose" className="w-20 h-20 object-contain drop-shadow-2xl hover:scale-110 transition-transform" />
+                        <img src="/rose.jpg" alt="Rose" className="w-32 h-32 object-contain drop-shadow-2xl hover:scale-125 transition-transform" />
                     </motion.button>
                 ))}
             </AnimatePresence>
