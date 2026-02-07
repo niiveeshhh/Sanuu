@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flower, Trophy } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 // import { playPop, playSuccess } from '../utils/sounds';
 
 interface MiniGameProps {
@@ -17,28 +17,6 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
     const [score, setScore] = useState(0);
     const [items, setItems] = useState<Item[]>([]);
     const targetScore = 10;
-
-    // Background music
-    useEffect(() => {
-        const audio = new Audio('/song.mp3');
-        audio.loop = true;
-        audio.volume = 0.3; // Set volume to 30%
-
-        // Play music when component mounts
-        const playPromise = audio.play();
-
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log('Audio autoplay prevented:', error);
-            });
-        }
-
-        // Cleanup: stop music when component unmounts
-        return () => {
-            audio.pause();
-            audio.currentTime = 0;
-        };
-    }, []);
 
     const spawnItem = useCallback(() => {
         const id = Date.now();
@@ -91,7 +69,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
                         style={{ left: item.x }}
                         className="absolute top-0 cursor-pointer p-2 z-40 touch-none select-none"
                     >
-                        <Flower className="w-12 h-12 text-rose-500 fill-rose-500 drop-shadow-lg" />
+                        <img src="/rose.jpg" alt="Rose" className="w-12 h-12 object-contain drop-shadow-lg" />
                     </motion.button>
                 ))}
             </AnimatePresence>

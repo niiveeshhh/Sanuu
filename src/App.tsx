@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { Landing } from '../components/Landing';
 import { MiniGame } from '../components/MiniGame';
@@ -13,6 +13,34 @@ type Stage = 'landing' | 'game' | 'gallery' | 'videos' | 'messages' | 'final';
 
 function App() {
   const [stage, setStage] = useState<Stage>('landing');
+
+  // Background music that plays throughout the entire experience
+  useEffect(() => {
+    const audio = new Audio('/song.mp3');
+    audio.loop = true;
+    audio.volume = 0.3; // Set volume to 30%
+
+    // Play music when app starts
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        console.log('Audio autoplay prevented:', error);
+        // If autoplay is blocked, try to play on first user interaction
+        const playOnInteraction = () => {
+          audio.play();
+          document.removeEventListener('click', playOnInteraction);
+        };
+        document.addEventListener('click', playOnInteraction);
+      });
+    }
+
+    // Cleanup: stop music when app unmounts
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
 
   const startExperience = () => {
     setStage('game');
@@ -47,7 +75,7 @@ function App() {
             {/* Fallback skip button for testing/impatience */}
             <button
               onClick={() => nextStage('gallery')}
-              className="absolute bottom-4 right-4 text-xs text-rose-300 hover:text-rose-500"
+              className="absolute bottom-4 right-4 text-xl text-rose-300 hover:text-rose-500"
             >
               Skip
             </button>
