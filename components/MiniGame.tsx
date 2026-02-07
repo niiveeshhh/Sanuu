@@ -20,7 +20,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
 
     const spawnItem = useCallback(() => {
         const id = Date.now();
-        const x = Math.random() * (window.innerWidth - 60); // Keep within bounds
+        const x = Math.random() * (window.innerWidth - 100); // Keep within bounds for larger roses
         setItems(prev => [...prev, { id, x, type: 'rose' }]);
     }, []);
 
@@ -31,7 +31,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
             return;
         }
 
-        const interval = setInterval(spawnItem, 800);
+        const interval = setInterval(spawnItem, 600); // Faster spawn for more engaging gameplay
         return () => clearInterval(interval);
     }, [score, spawnItem, onComplete]);
 
@@ -59,17 +59,25 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
                 {items.map(item => (
                     <motion.button
                         key={item.id}
-                        initial={{ y: -50, opacity: 0 }}
-                        animate={{ y: window.innerHeight, opacity: 1 }}
+                        initial={{ y: -80, opacity: 0, rotate: -20 }}
+                        animate={{
+                            y: window.innerHeight,
+                            opacity: 1,
+                            rotate: 360
+                        }}
                         exit={{ scale: 0, opacity: 0 }}
-                        transition={{ duration: 4, ease: "linear" }}
+                        transition={{
+                            duration: 4.5,
+                            ease: "linear",
+                            rotate: { duration: 3, repeat: Infinity, ease: "linear" }
+                        }}
                         onAnimationComplete={() => removeMissed(item.id)}
                         onClick={() => handleCollect(item.id)} // Desktop click
                         onTouchStart={() => handleCollect(item.id)} // Mobile tap
                         style={{ left: item.x }}
-                        className="absolute top-0 cursor-pointer p-2 z-40 touch-none select-none"
+                        className="absolute top-0 cursor-pointer z-40 touch-none select-none"
                     >
-                        <img src="/rose.jpg" alt="Rose" className="w-12 h-12 object-contain drop-shadow-lg" />
+                        <img src="/rose.jpg" alt="Rose" className="w-20 h-20 object-contain drop-shadow-2xl hover:scale-110 transition-transform" />
                     </motion.button>
                 ))}
             </AnimatePresence>

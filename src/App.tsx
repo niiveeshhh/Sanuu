@@ -86,7 +86,7 @@ function App() {
             {/* Fallback skip button for testing/impatience */}
             <button
               onClick={() => nextStage('gallery')}
-              className="absolute bottom-4 right-4 text-xl text-rose-300 hover:text-rose-500"
+              className="absolute bottom-4 right-4 text-2xl px-4 py-2 text-rose-300 hover:text-rose-500 font-semibold"
             >
               Skip
             </button>
