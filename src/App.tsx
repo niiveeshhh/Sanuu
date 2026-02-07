@@ -3,12 +3,13 @@ import { Layout } from '../components/Layout';
 import { Landing } from '../components/Landing';
 import { MiniGame } from '../components/MiniGame';
 import { Gallery } from '../components/Gallery';
+import { VideoGallery } from '../components/VideoGallery';
 import { Messages } from '../components/Messages';
 import { FinalProposal } from '../components/FinalProposal';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Stages of the surprise
-type Stage = 'landing' | 'game' | 'gallery' | 'messages' | 'final';
+type Stage = 'landing' | 'game' | 'gallery' | 'videos' | 'messages' | 'final';
 
 function App() {
   const [stage, setStage] = useState<Stage>('landing');
@@ -62,7 +63,20 @@ function App() {
             transition={{ duration: 0.5 }}
             className="w-full h-full absolute inset-0"
           >
-            <Gallery onNext={() => nextStage('messages')} />
+            <Gallery onNext={() => nextStage('videos')} />
+          </motion.div>
+        )}
+
+        {stage === 'videos' && (
+          <motion.div
+            key="videos"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.5 }}
+            className="w-full h-full absolute inset-0"
+          >
+            <VideoGallery onNext={() => nextStage('messages')} />
           </motion.div>
         )}
 

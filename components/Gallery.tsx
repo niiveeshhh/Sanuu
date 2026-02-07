@@ -9,42 +9,114 @@ interface MediaItem {
     caption: string;
 }
 
-// Placeholder data - User should replace these URLs
+// Local photos from the Photos folder
 const memories: MediaItem[] = [
     {
         id: 1,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop',
-        caption: 'Our first date 🌹'
+        url: '/photos/p1.jpg.jpg',
+        caption: 'Beautiful memories 🌹'
     },
     {
         id: 2,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=600&auto=format&fit=crop',
-        caption: 'Best trip ever ✈️'
+        url: '/photos/p2.jpg.jpg',
+        caption: 'Forever in my heart ❤️'
     },
     {
         id: 3,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1522673607200-1645062cd958?q=80&w=600&auto=format&fit=crop',
-        caption: 'Just you being cute 💖'
+        url: '/photos/p3.jpg.jpg',
+        caption: 'You make me smile 😊'
     },
     {
         id: 4,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=600&auto=format&fit=crop',
-        caption: 'That smile though 😍'
+        url: '/photos/p4.jpg.jpg',
+        caption: 'Perfect moments ✨'
     },
     {
         id: 5,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop',
-        caption: 'Always happy '
+        url: '/photos/p5.jpg.jpg',
+        caption: 'Always together 💕'
     },
     {
         id: 6,
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
+        url: '/photos/p6.jpg.jpg',
+        caption: 'My favorite person 🌟'
+    },
+    {
+        id: 7,
+        type: 'image',
+        url: '/photos/p7.jpg.jpg',
+        caption: 'Sweet memories 🍭'
+    },
+    {
+        id: 8,
+        type: 'image',
+        url: '/photos/p8.jpg.jpg',
+        caption: 'You and me 💑'
+    },
+    {
+        id: 9,
+        type: 'image',
+        url: '/photos/p9.jpg.jpg',
+        caption: 'Happiness overload 🎉'
+    },
+    {
+        id: 10,
+        type: 'image',
+        url: '/photos/p10.jpg.jpg',
+        caption: 'Best moments ever 🌈'
+    },
+    {
+        id: 11,
+        type: 'image',
+        url: '/photos/p11.jpg.jpg',
+        caption: 'Love you so much 💖'
+    },
+    {
+        id: 12,
+        type: 'image',
+        url: '/photos/p12.jpg.jpg',
+        caption: 'Our special day 🎊'
+    },
+    {
+        id: 13,
+        type: 'image',
+        url: '/photos/p13.jpg.jpeg',
+        caption: 'Unforgettable times 🌺'
+    },
+    {
+        id: 14,
+        type: 'image',
+        url: '/photos/p14.jpg.jpeg',
+        caption: 'Pure joy 😄'
+    },
+    {
+        id: 15,
+        type: 'image',
+        url: '/photos/p15.jpg.jpg',
+        caption: 'Together forever 🔒'
+    },
+    {
+        id: 16,
+        type: 'image',
+        url: '/photos/p16.jpg.jpg',
+        caption: 'My sunshine ☀️'
+    },
+    {
+        id: 17,
+        type: 'image',
+        url: '/photos/p17.jpg.jpg',
+        caption: 'Precious moments 💎'
+    },
+    {
+        id: 18,
+        type: 'image',
+        url: '/photos/p18.jpg.jpg',
         caption: 'Forever & Always ✨'
     },
 ];

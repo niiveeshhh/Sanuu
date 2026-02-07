@@ -18,6 +18,28 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
     const [items, setItems] = useState<Item[]>([]);
     const targetScore = 10;
 
+    // Background music
+    useEffect(() => {
+        const audio = new Audio('/song.mp3');
+        audio.loop = true;
+        audio.volume = 0.3; // Set volume to 30%
+
+        // Play music when component mounts
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('Audio autoplay prevented:', error);
+            });
+        }
+
+        // Cleanup: stop music when component unmounts
+        return () => {
+            audio.pause();
+            audio.currentTime = 0;
+        };
+    }, []);
+
     const spawnItem = useCallback(() => {
         const id = Date.now();
         const x = Math.random() * (window.innerWidth - 60); // Keep within bounds
