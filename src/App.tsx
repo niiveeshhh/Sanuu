@@ -15,41 +15,125 @@ function App() {
   const [stage, setStage] = useState<Stage>('landing');
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isAudioReady, setIsAudioReady] = useState(false);
 
   // Background music that plays throughout the entire experience
   useEffect(() => {
     const audio = new Audio('/song.mp3');
     audio.loop = true;
     audio.volume = 0.3; // Set volume to 30%
+    audio.preload = 'auto';
     audioRef.current = audio;
 
-    // Play music when app starts
-    const playPromise = audio.play();
+    // Function to attempt playing audio
+    const attemptPlay = () => {
+      if (audioRef.current && !audioRef.current.paused) return;
 
-    if (playPromise !== undefined) {
-      playPromise.catch(error => {
-        console.log('Audio autoplay prevented:', error);
-        // If autoplay is blocked, try to play on first user interaction
-        const playOnInteraction = () => {
-          audio.play();
-          document.removeEventListener('click', playOnInteraction);
-        };
-        document.addEventListener('click', playOnInteraction);
-      });
-    }
+      const playPromise = audioRef.current?.play();
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log('Audio playing successfully');
+            setIsAudioReady(true);
+          })
+          .catch(error => {
+            console.log('Audio autoplay prevented:', error);
+            setIsAudioReady(false);
+          });
+      }
+    };
+
+    // Event listeners to ensure continuous playback
+    const handleEnded = () => {
+      console.log('Audio ended, restarting...');
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        attemptPlay();
+      }
+    };
+
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e);
+      // Try to reload and play again after a short delay
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.load();
+          attemptPlay();
+        }
+      }, 1000);
+    };
+
+    const handlePause = () => {
+      // If audio pauses unexpectedly (not due to mute), try to resume
+      if (audioRef.current && !audioRef.current.muted && !isMuted) {
+        console.log('Audio paused unexpectedly, resuming...');
+        setTimeout(attemptPlay, 100);
+      }
+    };
+
+    const handleCanPlay = () => {
+      console.log('Audio can play');
+      attemptPlay();
+    };
+
+    // Add event listeners
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('canplay', handleCanPlay);
+
+    // Handle page visibility changes - resume audio when page becomes visible
+    const handleVisibilityChange = () => {
+      if (!document.hidden && audioRef.current) {
+        attemptPlay();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Try to play on first user interaction if autoplay is blocked
+    const playOnInteraction = () => {
+      attemptPlay();
+      document.removeEventListener('click', playOnInteraction);
+      document.removeEventListener('touchstart', playOnInteraction);
+      document.removeEventListener('keydown', playOnInteraction);
+    };
+
+    document.addEventListener('click', playOnInteraction);
+    document.addEventListener('touchstart', playOnInteraction);
+    document.addEventListener('keydown', playOnInteraction);
+
+    // Initial play attempt
+    attemptPlay();
 
     // Cleanup: stop music when app unmounts
     return () => {
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('canplay', handleCanPlay);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener('click', playOnInteraction);
+      document.removeEventListener('touchstart', playOnInteraction);
+      document.removeEventListener('keydown', playOnInteraction);
+
       audio.pause();
       audio.currentTime = 0;
+      audio.src = '';
     };
-  }, []);
+  }, [isMuted]);
 
   // Handle mute/unmute
   const toggleMute = () => {
     if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      const newMutedState = !isMuted;
+      audioRef.current.muted = newMutedState;
+      setIsMuted(newMutedState);
+
+      // If unmuting, ensure audio is playing
+      if (!newMutedState && audioRef.current.paused) {
+        audioRef.current.play().catch(err => console.log('Play on unmute failed:', err));
+      }
     }
   };
 
