@@ -15,7 +15,6 @@ function App() {
   const [stage, setStage] = useState<Stage>('landing');
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isAudioReady, setIsAudioReady] = useState(false);
 
   // Background music that plays throughout the entire experience
   useEffect(() => {
@@ -35,11 +34,9 @@ function App() {
         playPromise
           .then(() => {
             console.log('Audio playing successfully');
-            setIsAudioReady(true);
           })
           .catch(error => {
             console.log('Audio autoplay prevented:', error);
-            setIsAudioReady(false);
           });
       }
     };

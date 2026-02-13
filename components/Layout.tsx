@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import Particles from '@tsparticles/react';
+import { initParticlesEngine } from '@tsparticles/react';
 import { loadSlim } from '@tsparticles/slim';
-import type { Engine } from '@tsparticles/engine';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -11,18 +11,24 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children, onToggleMute, isMuted }) => {
-    const particlesInit = useCallback(async (engine: Engine) => {
-        await loadSlim(engine);
+    const [init, setInit] = useState(false);
+
+    useEffect(() => {
+        initParticlesEngine(async (engine) => {
+            await loadSlim(engine);
+        }).then(() => {
+            setInit(true);
+        });
     }, []);
 
     return (
         <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 text-gray-800 transition-colors duration-500">
             {/* Floating Hearts Background */}
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                className="absolute inset-0 z-0"
-                options={{
+            {init && (
+                <Particles
+                    id="tsparticles"
+                    className="absolute inset-0 z-0"
+                    options={{
                     background: {
                         color: {
                             value: "transparent",
@@ -49,7 +55,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, onToggleMute, isMuted 
                             animation: {
                                 enable: true,
                                 speed: 3,
-                                minimumValue: 0.5,
                                 sync: false,
                             },
                         },
@@ -65,12 +70,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, onToggleMute, isMuted 
                             attract: {
                                 enable: false,
                             },
-                            bounce: false,
                         },
                         number: {
                             density: {
                                 enable: true,
-                                area: 1000,
                             },
                             value: 40,
                         },
@@ -87,8 +90,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, onToggleMute, isMuted 
                         },
                     },
                     detectRetina: true,
-                }}
-            />
+                    }}
+                />
+            )}
             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-[radial-gradient(#ffc0cb_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
             <button

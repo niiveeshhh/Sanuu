@@ -21,14 +21,12 @@ export const FinalProposal: React.FC = () => {
                 particleCount,
                 origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 },
                 colors: ['#ff1744', '#ff4081', '#ffffff', '#ff69b4', '#ffc0cb'],
-                shapes: ['circle', 'heart'],
                 spread: 70,
             });
             confetti({
                 particleCount,
                 origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 },
                 colors: ['#ff1744', '#ff4081', '#ffffff', '#ff69b4', '#ffc0cb'],
-                shapes: ['circle', 'heart'],
                 spread: 70,
             });
         }, 250);
@@ -42,7 +40,6 @@ export const FinalProposal: React.FC = () => {
         const defaults = {
             origin: { y: 0.7 },
             colors: ['#ff1744', '#d50000', '#ff80ab', '#ff69b4', '#ffc0cb', '#ffffff'],
-            shapes: ['circle', 'heart'],
         };
 
         function fire(particleRatio: number, opts: confetti.Options) {
