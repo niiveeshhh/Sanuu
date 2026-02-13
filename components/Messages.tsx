@@ -11,19 +11,44 @@ const messages = [
     "Every moment with you is a blessing ✨",
     "Thank you for making my life so beautiful 🌹",
     "I love you more than words can say ❤️",
-    "You are the best thing that ever happened to me 🎁"
+    "You are the best thing that ever happened to me 🎁",
+    "I love you forever 💕",
+    "Every moment with you is special ✨"
 ];
 
 export const Messages: React.FC<MessagesProps> = ({ onNext }) => {
     const [index, setIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState('');
+    const [isTyping, setIsTyping] = useState(true);
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % messages.length);
-        }, 4000); // Change message every 4 seconds
+        setIsTyping(true);
+        setDisplayedText('');
+        const currentMessage = messages[index];
+        let charIndex = 0;
 
-        return () => clearInterval(timer);
-    }, []);
+        const typeInterval = setInterval(() => {
+            if (charIndex < currentMessage.length) {
+                setDisplayedText(currentMessage.slice(0, charIndex + 1));
+                charIndex++;
+            } else {
+                setIsTyping(false);
+                clearInterval(typeInterval);
+            }
+        }, 50); // Typing speed
+
+        return () => clearInterval(typeInterval);
+    }, [index]);
+
+    useEffect(() => {
+        if (!isTyping) {
+            const timer = setTimeout(() => {
+                setIndex((prev) => (prev + 1) % messages.length);
+            }, 3000); // Show complete message for 3 seconds before next
+
+            return () => clearTimeout(timer);
+        }
+    }, [isTyping]);
 
     return (
         <div className="flex flex-col items-center justify-center h-full w-full px-4 text-center">
@@ -39,28 +64,38 @@ export const Messages: React.FC<MessagesProps> = ({ onNext }) => {
             </motion.div>
 
             <div className="h-40 flex items-center justify-center w-full max-w-2xl px-6 relative">
-                <AnimatePresence mode="wait">
-                    <motion.p
-                        key={index}
-                        initial={{ opacity: 0, y: 20, rotateX: 90 }}
-                        animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                        exit={{ opacity: 0, y: -20, rotateX: -90 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-2xl md:text-4xl font-handwriting text-rose-700 leading-relaxed"
-                    >
-                        "{messages[index]}"
-                    </motion.p>
-                </AnimatePresence>
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="bg-white/70 backdrop-blur-md px-8 py-6 rounded-3xl shadow-xl border-2 border-rose-200"
+                >
+                    <p className="text-2xl md:text-4xl font-handwriting text-rose-700 leading-relaxed">
+                        "{displayedText}"
+                        {isTyping && (
+                            <motion.span
+                                animate={{ opacity: [1, 0] }}
+                                transition={{ duration: 0.8, repeat: Infinity }}
+                                className="inline-block ml-1"
+                            >
+                                |
+                            </motion.span>
+                        )}
+                    </p>
+                </motion.div>
             </div>
 
             <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 5 }} // Show button after a while
+                transition={{ delay: 5 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={onNext}
-                className="mt-12 px-8 py-3 border-2 border-rose-400 text-rose-600 rounded-full font-bold hover:bg-rose-50 transition-colors"
+                className="mt-12 px-8 py-3 bg-gradient-to-r from-rose-400 to-rose-600 text-white rounded-full font-bold shadow-xl hover:shadow-2xl transition-all border-2 border-rose-300"
             >
-                One Last Surprise...
+                One Last Surprise... ✨
             </motion.button>
         </div>
     );

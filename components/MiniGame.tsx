@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy } from 'lucide-react';
-// import { playPop, playSuccess } from '../utils/sounds';
+import { playPop, playSuccess } from '../src/utils/sounds';
 
 interface MiniGameProps {
     onComplete: () => void;
@@ -39,7 +39,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
 
     useEffect(() => {
         if (score >= targetScore) {
-            // playSuccess();
+            playSuccess();
             setTimeout(onComplete, 1500);
             return;
         }
@@ -57,7 +57,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
     }, []);
 
     const handleCollect = (id: number) => {
-        // playPop();
+        playPop();
         setItems(prev => prev.filter(item => item.id !== id));
         setScore(prev => prev + 1);
     };
@@ -69,26 +69,31 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
     return (
         <div className="flex flex-col items-center justify-center h-full w-full relative overflow-hidden">
             {/* Score Display */}
-            <div className="absolute top-4 right-4 bg-white/50 backdrop-blur-md p-4 rounded-xl shadow-lg border border-rose-200 z-50">
+            <motion.div 
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="absolute top-4 right-4 bg-white/70 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border-2 border-rose-200/60 z-50"
+            >
                 <div className="flex items-center gap-2 text-2xl font-bold text-rose-600">
-                    <Trophy className="w-6 h-6" />
+                    <Trophy className="w-6 h-6 text-rose-500" />
                     <span>{score} / {targetScore}</span>
                 </div>
-                <p className="text-xs text-rose-800">Catch the roses!</p>
-            </div>
+                <p className="text-xs text-rose-800 mt-1">Catch the roses! 🌹</p>
+            </motion.div>
 
             {/* Love Quote Display */}
             <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 z-50 max-w-md px-4">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={currentQuote}
-                        initial={{ opacity: 0, y: -20, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                        initial={{ opacity: 0, y: -20, scale: 0.8, rotateX: -90 }}
+                        animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.8, rotateX: 90 }}
                         transition={{ duration: 0.6 }}
-                        className="bg-white/70 backdrop-blur-md px-6 py-4 rounded-2xl shadow-xl border-2 border-rose-300"
+                        className="bg-white/80 backdrop-blur-xl px-6 py-5 rounded-3xl shadow-2xl border-2 border-rose-300/60 relative overflow-hidden"
                     >
-                        <p className="text-xl md:text-2xl font-handwriting text-rose-600 text-center leading-relaxed">
+                        <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-pink-50/50 rounded-3xl"></div>
+                        <p className="text-xl md:text-2xl font-handwriting text-rose-700 text-center leading-relaxed relative z-10">
                             {loveQuotes[currentQuote]}
                         </p>
                     </motion.div>
@@ -124,14 +129,26 @@ export const MiniGame: React.FC<MiniGameProps> = ({ onComplete }) => {
 
             {score >= targetScore && (
                 <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', damping: 10 }}
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-md z-50"
                 >
-                    <div className="bg-white p-8 rounded-3xl shadow-2xl text-center">
-                        <h2 className="text-4xl font-handwriting text-rose-600 mb-4">Good Job! 🎉</h2>
-                        <p className="text-xl text-gray-600">You collected them all!</p>
-                    </div>
+                    <motion.div 
+                        initial={{ rotate: -10 }}
+                        animate={{ rotate: 0 }}
+                        className="bg-white/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl text-center border-4 border-rose-300 relative overflow-hidden"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-rose-100/50 to-pink-100/50"></div>
+                        <motion.h2 
+                            animate={{ scale: [1, 1.1, 1] }}
+                            transition={{ duration: 0.5, repeat: Infinity }}
+                            className="text-4xl font-handwriting text-rose-600 mb-4 relative z-10"
+                        >
+                            Good Job! 🎉
+                        </motion.h2>
+                        <p className="text-xl text-gray-700 relative z-10">You collected them all! 🌹</p>
+                    </motion.div>
                 </motion.div>
             )}
         </div>
